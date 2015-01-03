@@ -1,0 +1,111 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) FIRST 2008. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
+package edu.wpi.first.wpilibj.templates;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ **/
+
+public class Aerial extends IterativeRobot {
+    
+    SpeedController leftOne = new Talon(1),
+            leftTwo = new Talon(2),
+            rightOne = new Talon(3),
+            rightTwo = new Talon(4),
+            pivotMotor = new Talon(5),
+            winchMotors = new Talon(6),
+            latchMotor = new Talon(7);
+    
+    DigitalInput latchInput = new DigitalInput(1);
+    
+    DriverStation dsLCD =  DriverStation.getInstance();
+    
+    Joystick saber = new Joystick(1),
+            leDriveStick = new Joystick(2),
+            reWinchStick = new Joystick(3);
+    
+    Button latchFire = new JoystickButton(saber, 1),
+            latchIn = new JoystickButton(saber, 3),
+            pivotDown = new JoystickButton(saber, 3),
+            pivotUp = new JoystickButton(saber, 4),
+            stopButton = new JoystickButton(saber, 5),
+            winchToggle = new JoystickButton(saber, 6),
+            arcadeButton = new JoystickButton(saber, 7),
+            tankButton = new JoystickButton(saber, 8),
+            autoLatch = new JoystickButton(saber, 9),
+            autoWinch = new JoystickButton(saber, 10);
+    
+    double driveAxisXArc = saber.getRawAxis(1),
+            driveAxisYArc = saber.getRawAxis(2),
+            winchAxis = saber.getRawAxis(5),
+            driveAxisLeftTan = saber.getRawAxis(2),
+            driveAxisRightTan = saber.getRawAxis(5);
+        
+    RobotDrive drive = new RobotDrive(leftOne, leftTwo, rightOne, rightTwo);
+    
+    boolean driveSwitch = false;
+    
+    /**
+     * This function is called periodically during autonomous
+     **/
+    
+    public void autonomousPeriodic() {
+        
+    }
+
+    /**
+     * This function is called periodically during operator control
+     **/
+    
+    public void teleopPeriodic() {
+        switchBack();
+        buttonUse();
+    }
+    
+    /**
+     * This function is called periodically during test mode
+     **/
+    
+    public void testPeriodic() {
+    
+    }
+    public void switchBack() {
+        if (arcadeButton.get()) driveSwitch = false;
+        if (tankButton.get()) driveSwitch = true;
+        if (driveSwitch)
+            drive.arcadeDrive(driveAxisYArc, driveAxisXArc);
+        else if (!driveSwitch)
+            drive.tankDrive(driveAxisLeftTan, driveAxisRightTan);
+    }
+    public void buttonUse() {
+        if (latchFire.get()) latchMotor.set(-1);
+        else if (latchIn.get()) latchMotor.set(1);
+        else latchMotor.set(0);
+        
+        if (pivotUp.get()) pivotMotor.set(-1);
+        else if (pivotDown.get()) pivotMotor.set(1);
+        else pivotMotor.set(0);
+        
+        if (winchToggle.get()) winchMotors.set(driveAxisRightTan);
+        else winchMotors.set(0);
+    }
+}
