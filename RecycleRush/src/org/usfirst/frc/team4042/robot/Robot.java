@@ -25,8 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	RobotDrive myRobot;
 	Joystick genStick;
-	double autoLoopCounter, lightCounter, offCounter, topCounter, range, autoPickup,
-		   oneCrate, twoCrate, threeCrate;
+	double autoLoopCounter, lightCounter, offCounter, topCounter, range, autoPickup;
 	SpeedController //liftRight, 
 	liftLeft, liftMiddle;
 	DriverStation ds;
@@ -42,9 +41,9 @@ public class Robot extends IterativeRobot {
     	myRobot = new RobotDrive(0,1,2,3);
         myRobot.setExpiration(0.1);
     	genStick = new Joystick(0);
-    	//liftRight = new Talon(4);
+    	liftRight = new Talon(4);
     	liftLeft = new Talon(5);
-    	liftMiddle = new Talon(4);
+    	liftMiddle = new Talon(6);
     	red = new Servo(7);
     	green = new Servo(8);
     	blue = new Servo(9);
@@ -69,13 +68,13 @@ public class Robot extends IterativeRobot {
     	//1 Second is 100 loops as the driver station takes 20ms to update, do the math
     	if (autoLoopCounter < 50)//Lift for .5 seconds
     	{
-    		//liftRight.set(.5);
+    		liftRight.set(.5);
     		liftLeft.set(.5);
     	}
     	if (autoLoopCounter < 100 && autoLoopCounter > 50)//Stop the lift motors and turn right for .5 seconds
     	{
     		liftLeft.set(0);
-    		//liftRight.set(0);
+    		liftRight.set(0);
     		myRobot.tankDrive(.75, .25);
     	}
     	if(autoLoopCounter < 200 && autoLoopCounter > 100)//Drive forward for 1 second
@@ -139,17 +138,17 @@ public class Robot extends IterativeRobot {
         myRobot.arcadeDrive(genStick);//Driving with the generic stick
         
         if (genStick.getRawButton(1)) {
-        	//liftRight.set(0.5);
+        	liftRight.set(0.5);
         	liftLeft.set(0.5);
         	liftMiddle.set(.5);
         } else if (genStick.getRawButton(2)) {
-        	//liftRight.set(-.5);
+        	liftRight.set(-.5);
         	liftLeft.set(-.5);
         	liftMiddle.set(-.5);
         } else
         {
         	liftLeft.set(0);
-        	//liftRight.set(0);
+        	liftRight.set(0);
         	liftMiddle.set(0);
         }
         
@@ -238,7 +237,7 @@ public class Robot extends IterativeRobot {
     	while(!genStick.getRawButton(12) && autoPickup < 50)
     	{
     		liftLeft.set(.5);
-    		//liftRight.set(-.5);
+    		liftRight.set(-.5);
     		autoPickup++;
     	}
     }
